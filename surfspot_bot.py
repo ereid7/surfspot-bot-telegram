@@ -7,19 +7,17 @@ import re
 def surf(update, context):
   search = ' '.join(context.args)
   # search for surf spot name
-  search_url = f"https://www.surfline.com/search/{search}"
+  search_url = f'https://www.surfline.com/search/{search}'
   search_page_html = requests.get(search_url).text
   search_soup = BeautifulSoup(search_page_html, 'html.parser')
 
   # retrieve first search result
   first_result_container = search_soup.find('div', { 'class' : 'result'})
 
-  # return if no surf spotws found
+  # return if no surf spots found
   if (first_result_container is None):
-    update.message.reply_text(f"No surf spots found for: {search}")
+    update.message.reply_text(f'No surf spots found for: {search}')
     return
-    # console.print(f"No surf spots found for: {search}", style="cyan")
-    # sys.exit()
 
   # grab link to first surf spot result and parse page
   first_result_link = first_result_container.findChildren('a')[0]
@@ -46,21 +44,20 @@ def surf(update, context):
   air_temp_container = soup.find('div', { 'class' : 'quiver-weather-stats'}).findChildren('div')[0]
 
   surf_message = constructMessage(
-    title_container.getText().strip(),
+    title_container.getText().strip()[:-23], # Removing the text 'Surf Report & Forecast'
     surf_url,
     height_container.getText().strip(),
     height_description.getText(separator=' ').strip(),
     tide_height_container.getText().strip(),
     tide_description_container.getText(separator=' ').strip(),
     water_temp_container.getText().strip(),
-    air_temp_container.getText().strip()
-  )
+    air_temp_container.getText().strip())
 
   # write to telegram
   update.message.reply_text(surf_message, parse_mode=ParseMode.HTML)
 
 def constructMessage(title, url, surfHeight, surfHeightDesc, tideHeight, tideDesc, waterTemp, airTemp):
-  return f"""<b>{title}</b>
+  return f'''<b>🏄{title}🏄</b>
 <pre>
 Surf Height:   {surfHeight}
 {surfHeightDesc}
@@ -71,13 +68,13 @@ Tide Height:   {tideHeight}
 Water Temp:    {waterTemp}
 Air Temp:      {airTemp}</pre>
 
-<a href="{url}">More Information at Surfline</a>"""
+<a href="{url}">More Information at Surfline</a>'''
 
 
 def main():
   updater = Updater('1568311946:AAEDnZVePDCh2DwkVd1jnK5g3icusDYiPyE')
   dp = updater.dispatcher
-  dp.add_handler(CommandHandler("surf", surf, pass_args=True))
+  dp.add_handler(CommandHandler('surf', surf, pass_args=True))
   updater.start_polling()
   updater.idle()
 
