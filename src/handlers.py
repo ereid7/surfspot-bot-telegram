@@ -43,6 +43,9 @@ def surf(update, context):
   water_temp_container = soup.find('div', { 'class' : 'quiver-water-temp'}).findChildren('div')[0]
   air_temp_container = soup.find('div', { 'class' : 'quiver-weather-stats'}).findChildren('div')[0]
 
+  # forecast
+  report_container = soup.find('div', { 'class' : 'quiver-spot-report__report-text'}).findChildren('div')[3]
+
   surf_message = constructMessage(
     title_container.getText().strip()[:-23], # Removing the text 'Surf Report & Forecast'
     surf_url,
@@ -51,33 +54,33 @@ def surf(update, context):
     tide_height_container.getText().strip(),
     tide_description_container.getText(separator=' ').strip(),
     water_temp_container.getText().strip(),
-    air_temp_container.getText().strip())
+    air_temp_container.getText().strip(),
+    report_container.getText())
 
   # write to telegram
   update.message.reply_text(surf_message, parse_mode=ParseMode.HTML)
 
-def constructMessage(title, url, surfHeight, surfHeightDesc, tideHeight, tideDesc, waterTemp, airTemp):
+def constructMessage(title, 
+                     url, 
+                     surfHeight, 
+                     surfHeightDesc, 
+                     tideHeight, 
+                     tideDesc, 
+                     waterTemp, 
+                     airTemp, 
+                     report):
+
   return f'''<b>🏄{title}🏄</b>
 <pre>
-Surf Height:   {surfHeight}
+Surf Height:    {surfHeight}
 {surfHeightDesc}
   
-Tide Height:   {tideHeight}
+Tide Height:    {tideHeight}
 {tideDesc}
 
-Water Temp:    {waterTemp}
-Air Temp:      {airTemp}</pre>
+Water Temp:     {waterTemp}
+Air Temp:       {airTemp}</pre>
+
+{report}
 
 <a href="{url}">More Information at Surfline</a>'''
-
-
-def main():
-  updater = Updater('1568311946:AAEDnZVePDCh2DwkVd1jnK5g3icusDYiPyE')
-  dp = updater.dispatcher
-  dp.add_handler(CommandHandler('surf', surf, pass_args=True))
-  updater.start_polling()
-  updater.idle()
-
-
-if __name__ == '__main__':
-  main()
