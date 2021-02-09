@@ -29,4 +29,4 @@ will search surfline.com for "la jolla shores" and retrieve the surf report for 
 
 ## Screenshot
 
-![SurfSpotBot](surfspotbot_example.png "SurfSpotBot")
+![SurfSpotBot](surfspotbot_example.PNG "SurfSpotBot")
